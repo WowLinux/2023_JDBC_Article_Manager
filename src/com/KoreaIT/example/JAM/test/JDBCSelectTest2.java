@@ -42,9 +42,9 @@ public class JDBCSelectTest2 {
 				String title = rs.getString("title");
 				String body = rs.getString("body");
 				
-				Article article = new Article(id, regDate, updateDate, title, body);
-				articles.add(article);
-				System.out.println("결과 : " + article);
+//				Article article = new Article(id, regDate, updateDate, title, body);
+//				articles.add(article);
+//				System.out.println("결과 : " + article);
 				
 			}
 //			int row = pstmt.executeUpdate();  Insert할때 필요한것			
