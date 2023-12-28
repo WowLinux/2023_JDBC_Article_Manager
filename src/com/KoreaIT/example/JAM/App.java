@@ -78,8 +78,6 @@ Scanner sc = new Scanner(System.in);
 			sql.append(", updateDate = NOW()");
 			sql.append(", title = ?", title);
 			sql.append(", `body` = ?", body);
-//			sql.append(", title = '\" + title + \"'");
-//			sql.append(", `body` = '\" + body + \"';");
 			
 			int id = DBUtil.insert(conn, sql);	
 			
@@ -106,7 +104,32 @@ Scanner sc = new Scanner(System.in);
 			
 			System.out.printf("%d번 글이 수정 되었습니다.\n", id);
 			
-		} else if(cmd.equals("article list")) {
+		}else if(cmd.startsWith("article delete ")) {				
+			int id = Integer.parseInt(cmd.split(" ")[2]);
+			
+			SecSql sql =new SecSql();
+			
+			sql.append("SELECT COUNT(*)");
+			sql.append("FROM article");
+			sql.append("WHERE id = ?", id);
+			
+			int articlesCount = DBUtil.selectRowIntValue(conn, sql);
+			if(articlesCount == 0) {
+				System.out.printf("%d번 게시글은 존재하지 않습니다.\n", id);
+				return;				
+			}
+			
+			System.out.printf("====%d번 게시물 삭제 ===\n", id);
+			sql = new SecSql();
+			
+			sql.append("DELETE FROM article");
+			sql.append("WHERE id = ?", id);
+
+			DBUtil.delete(conn, sql);
+			
+			System.out.printf("%d번 글이 삭제 되었습니다.\n", id);
+			
+		}else if(cmd.equals("article list")) {
 			System.out.println("==== 게시물 리스트 ===");
 			
 			List<Article> articles = new ArrayList<>();
