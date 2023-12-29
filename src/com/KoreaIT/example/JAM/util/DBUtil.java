@@ -143,9 +143,7 @@ public class DBUtil {
 					throw new SQLErrorException("SQL 예외, stmt 닫기, SQL : " + sql, e);
 				}
 			}
-
 		}
-
 		return id;
 	}
 
