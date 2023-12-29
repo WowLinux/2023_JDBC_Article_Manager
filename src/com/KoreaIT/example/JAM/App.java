@@ -2,8 +2,6 @@ package com.KoreaIT.example.JAM;
 
 import java.sql.Connection;
 import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -64,7 +62,64 @@ Scanner sc = new Scanner(System.in);
 
 	private void doAction(Connection conn, Scanner sc, String cmd) {
 		
-		if(cmd.equals("article write")) {
+		if(cmd.equals("member join")) {
+			String loginId = null;
+			String loginPw = null;
+			String loginPwChk = null;
+			String name = null;
+			
+			System.out.println("==== 회원가입 ===");
+			
+			while(true) {
+				System.out.printf("아이디 : ");
+				loginId = sc.nextLine().trim();
+				
+				if(loginId.length() == 0) {
+					System.out.println("아이디를 입력해주세요.");
+					continue;					
+				}
+				break;				
+			}
+			while(true) {
+				System.out.printf("비밀번호 : ");
+				loginPw = sc.nextLine().trim();
+				
+				if(loginPw.length() == 0) {
+					System.out.println("비밀번호를 입력해주세요.");
+					continue;					
+				}
+				while(true) {
+					System.out.printf("비밀번호 확인: ");
+					loginPwChk = sc.nextLine().trim();
+					
+					if (loginPwChk.length() == 0) {
+						System.out.println("비밀번호 확인을 입력해주세요.");
+						continue;						
+					}
+					if(loginPw.equals(loginPwChk) == false) {
+						System.out.println("비밀번호가 일치하지 않습니다. 다시 입력해 주세요.");
+						break;
+					}
+					break;
+				}				
+			}
+			
+			
+			System.out.printf("이름 : ");
+			 name = sc.nextLine().trim();
+			
+//			SecSql sql = new SecSql();
+//			sql.append("INSERT INTO article");
+//			sql.append("SET regDate = NOW()");
+//			sql.append(", updateDate = NOW()");
+//			sql.append(", title = ?", title);
+//			sql.append(", `body` = ?", body);
+//			
+//			int id = DBUtil.insert(conn, sql);	
+			
+			System.out.printf("%s회원님, 가입 되었습니다.\n", name);
+			
+		} else if(cmd.equals("article write")) {
 			
 			System.out.println("==== 게시물 작성 ===");
 			
