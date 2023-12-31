@@ -4,6 +4,7 @@ import java.sql.Connection;
 import java.util.List;
 import java.util.Scanner;
 import com.KoreaIT.example.JAM.Article;
+import com.KoreaIT.example.JAM.container.Container;
 import com.KoreaIT.example.JAM.service.ArticleService;
 
 
@@ -14,11 +15,17 @@ public class ArticleController extends Controller {
 	public ArticleController(Connection conn, Scanner sc) {
 
 		super(sc);
-		articleService = new ArticleService(conn);
+		articleService = Container.articleService;
 		
 	}
 
 	public void doWrite(String cmd) {
+		
+		if(Container.session.isLogined() == false) {
+			System.out.println("로그인 후 이용해주세요.");
+			return;
+		}
+		
 		System.out.println("==== 게시물 작성 ===");
 		
 		System.out.printf("제목 : ");

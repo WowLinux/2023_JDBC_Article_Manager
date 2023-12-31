@@ -54,31 +54,55 @@ Scanner sc = new Scanner(System.in);
 		sc.close();		
 	}
 
-	private void doAction(Connection conn, Scanner sc, String cmd) {
-		
-		MemberController memberController = new MemberController(conn, sc);
-		ArticleController articleController = new ArticleController(conn,sc);
-		
-		if(cmd.equals("member join")) {
+//	private void doAction(Connection conn, Scanner sc, String cmd) {
+	private void doAction(String cmd) {		
+//		MemberController memberController = new MemberController(conn, sc);
+//		ArticleController articleController = new ArticleController(conn,sc);
+		MemberController memberController = Container.memberController;
+		ArticleController articleController = Container.articleController;
+
+		if (cmd.equals("member join")) {
 			memberController.doJoin(cmd);
-			
-		} else if(cmd.equals("article write")) {			
+		} else if (cmd.equals("member logout")) {
+			memberController.logout(cmd);
+		} else if (cmd.equals("member login")) {
+			memberController.login(cmd);
+		} else if (cmd.equals("member profile")) {
+			memberController.showProfile(cmd);
+		} else if (cmd.equals("article write")) {
 			articleController.doWrite(cmd);
-			
-		} else if(cmd.startsWith("article detail ")) {				
-			articleController.showDetail(cmd);
-			
-		} else if(cmd.startsWith("article modify ")) {				
-			articleController.doModify(cmd);
-			
-		} else if(cmd.startsWith("article delete ")) {				
-			articleController.doDelete(cmd);
-			
-		} else if(cmd.equals("article list")) {
+		} else if (cmd.startsWith("article list")) {
 			articleController.showList(cmd);
+		} else if (cmd.startsWith("article detail ")) {
+			articleController.showDetail(cmd);
+		} else if (cmd.startsWith("article modify ")) {
+			articleController.doModify(cmd);
+		} else if (cmd.startsWith("article delete ")) {
+			articleController.doDelete(cmd);
 		} else {
-			System.out.println("존재하지 않는 명령어 입니다.");
-			
+			System.out.println("존재하지 않는 명령어 입니다");
 		}
+		
+		//		if(cmd.equals("member join")) {
+//			memberController.doJoin(cmd);
+//			
+//		} else if(cmd.equals("article write")) {			
+//			articleController.doWrite(cmd);
+//			
+//		} else if(cmd.startsWith("article detail ")) {				
+//			articleController.showDetail(cmd);
+//			
+//		} else if(cmd.startsWith("article modify ")) {				
+//			articleController.doModify(cmd);
+//			
+//		} else if(cmd.startsWith("article delete ")) {				
+//			articleController.doDelete(cmd);
+//			
+//		} else if(cmd.equals("article list")) {
+//			articleController.showList(cmd);
+//		} else {
+//			System.out.println("존재하지 않는 명령어 입니다.");
+//			
+//		}
 	}
 }

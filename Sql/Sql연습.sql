@@ -367,3 +367,191 @@ FROM (
        GROUP BY e.deptId
       ) AS F
       WHERE F.`평균연봉` >= 5000;  
+      
+      
+##======================================================================================
+#데이터 베이스 db_test가 존재하면 삭제
+DROP DATABASE IF EXISTS db_test;
+
+#데이터 베이스 db_test 생성
+CREATE DATABASE db_test;
+
+#데이터 베이스 db_test 선택
+USE db_test;
+
+#회원 테이블 생성, loginId, loginPw, `name`
+##조건 : loginId 컬럼에 UNIQUE INDEX 없이
+CREATE TABLE `member` (
+id INT UNSIGNED NOT NULL PRIMARY KEY AUTO_INCREMENT,
+regDate DATETIME NOT NULL,
+loginId VARCHAR(50) NOT NULL,
+loginPw VARCHAR(100) NOT NULL,
+`name` VARCHAR(50) NOT NULL
+);
+
+#회원 2명 생성 
+##조건 : (loginId = `user1`, loginPw = `user1`, `name`='홍길동')
+##조건 : (loginId = `user2`, loginPw = `user2`, `name`='홍길순')
+
+INSERT INTO `member`
+SET regDate = NOW(),
+loginId = 'user1',
+loginPw =  'user1',
+`name` = '홍길동';
+
+INSERT INTO `member`
+SET regDate = NOW(),
+loginId = 'user2',
+loginPw =  'user2',
+`name` = '홍길순';
+
+SELECT COUNT(*) FROM `member`;
+
+#회원 2배 증가 쿼리만들고 회원이 만명이 넘을때 까지 반복실행
+##힌트1 : INSERT INTO `tableName` (col1, col2, col3, col4)
+##힌트2 : SELECT NOW(), UUID(), `pw`, '아무개' 
+
+INSERT INTO `member` (regDate, loginId, loginPw, `name`)
+SELECT NOW(), UUID(),'pw', '아무개' 
+FROM `member`; 
+
+#회원수 확인
+#검색속도 확인
+## 힌트 : SQL_NO_CACHE
+SELECT SQL_NO_CACHE * 
+FROM `member`
+
+ALTER TABLE `member` ADD UNIQUE INDEX (`loginId`);
+ALTER TABLE `member` DROP INDEX `loginId`;
+
+SHOW INDEX FROM `member`;
+
+#유니크 인덱스를 loginId 컬럼에 걸기
+## 설명 : mysql이 loginId 의 고속검색을 위한 부가데이터를 자동으로 관리(생성/수정/삭제) 한다.
+## 설명 : 이게 있고 없고가, 특성상황에 어마어마한 성능차이를 가져온다.
+## 설명 : 생성된 인덱스의 이름은 기본적으로 컬럼명과 동일하다.
+
+#검색속도 확인, loginId가 'user1'인 회원검색
+#인덱스 삭제, `loginId` 이라는 이름의 인데스 삭제
+#회원 테이블 삭제
+
+DROP TABLE `member`;
+
+#회원 테이블을 생성하는데 , loginId에 unique Index까지 걸어준다.
+
+CREATE TABLE `member` (
+id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+PRIMARY KEY(id),
+regDate DATETIME NOT NULL,
+loginId VARCHAR(50) UNIQUE NOT NULL,
+loginPw VARCHAR(100) NOT NULL,
+`name` VARCHAR(100) NOT NULL
+);
+
+#회원 2명 생성
+
+INSERT INTO `member`
+SET regDate = NOW(),
+loginId = 'user1',
+loginPw =  'user1',
+`name` = '홍길동';
+
+INSERT INTO `member`
+SET regDate = NOW(),
+loginId = 'user2',
+loginPw =  'user2',
+`name` = '홍길순';
+
+#인텍스 쓰는지 확인 
+## 힌트 : explain selecct sql_no_cache * ~
+EXPLAIN SELECT SQL_NO_CACHE *
+FROM `member`
+WHERE loginId = 'user1';
+
+DROP TABLE `article`;
+
+#게시물 테이블 생성(title, body, writerName, memberId)
+CREATE TABLE `article` (
+id INT(10) UNSIGNED NOT NULL AUTO_INCREMENT,
+PRIMARY KEY(id),
+regDate DATETIME NOT NULL,
+title VARCHAR(200) NOT NULL,
+`body` TEXT NOT NULL,
+`writerName` VARCHAR(100) NOT NULL,
+memberId INT(10) UNSIGNED NOT NULL
+);
+
+SELECT * FROM article;
+
+#1번 회원이 글1 작성(title = '글 1 제목', `body` = '글 1 내용')
+INSERT INTO article
+SET regDate = NOW(),
+title ='글 1 제목',
+`body` = '글 1 내용',
+writerName = '홍길동',
+memberId =1;
+
+#2번 회원이 글2 작성(title = '글 2 제목', `body` = '글 2 내용')
+INSERT INTO article
+SET regDate = NOW(),
+title ='글 2 제목',
+`body` = '글 2 내용',
+writerName = '홍길순',
+memberId = 2;
+
+#1번 회원이 글3 작성(title = '글 3 제목', `body` = '글 3 내용')
+INSERT INTO article
+SET regDate = NOW(),
+title ='글 3 제목',
+`body` = '글 3 내용',
+writerName = '홍길동',
+memberId = 1;
+
+#전체글 조호ㅣ
+SELECT * FROM article;
+
+#1번 회원의 이름을  홍길동 -> 홍길동2
+UPDATE `member`
+SET `name` = '홍길동2'
+WHERE id =1;
+
+#전체글 조회, 여전히 게시물 테이블에는 이전 이름이 남아 있음.
+SELECT * 
+FROM article;
+
+#게시물 테이블에서 writerName 삭제
+ALTER TABLE article DROP COLUMN writerName;
+
+#INNER JOIN 을 통해 두 테이블을 조회한 결과를 합침, on없이
+SELECT * FROM article
+INNER JOIN `member`
+ON article.memberId = `member`.id;
+
+SELECT a.id, a.regDate, a.title, a.body, m.`name` FROM article AS a
+INNER JOIN `member` AS m
+ON a.memberId = m.id;
+
+#INNER JOIN을 통해서 두 테이블을 조회한 결과를 합침, 올바른 조인 조건
+#힌트 : 이걸로 조인조건을 걸 컬럼 조사
+SELECT article.id, article.memberId, member.id AS "회원테이블_번호"
+FROM article
+INNER JOIN `member`;
+
+#조인 완성, ON 까지 추가
+SELECT A.*, M.name AS writerName
+FROM article AS A
+INNER JOIN `member` AS M
+ON A.memberId = M.id; 
+
+#여기서 문제 
+# 문제 - 상황에 맞는 SQL을 작성해 주세요. INNER JOIN , INDEX, UNIQUE INDEX, SQL_NO_CACHE, EXPLAIN, UUID
+#상황 : 커뮤니티 사이트 DB를 구축해야 합니다.
+#조건 : member(회원), article(게시물) 테이블을 구현해 주세요.
+#조건 : 비회원은 글을 쓸수 없습니다.
+#조건 : 게시물 상세페이지에서는 제목,내용,작성날짜, 작성자가 보여야 합니다.
+#조건 : 특정 게시물을 어떤회원이 작성했는지 알 수 있어야 합니다.
+#조건 : 회원이 자신의 이름을 바꾸면, 그회원이 예전에 쓴 글에서도 작성자가 자동으로 변경되어야 합니다.
+#조건 : 회원 아이디의 비번의 컬럼명은 loginId와 loginPw로 해주세요.
+#조건 : loginId에는 unique 인덱스를 걸어주세요.
+#조건 : 회원2명이 가입을 했습니다.
+#조건 : 1번 회원은 글을 2개(글1,글3), 2번 회원은 글을 1개(2번) 썻습니다.       
