@@ -238,3 +238,24 @@ FROM article AS A
 INNER JOIN `member` AS M
 ON A.memberId = M.id
 WHERE A.id = 2;
+
+
+#+++++++++++++++++++++조건에 맞는것을 먼저 join을 걸고 걸린 조건에서 데이터 테이블(A)을 만들고  필요조건을 다시 건다. 
+select a.*, m.name as writerName
+from article as a
+inner join `member` as m
+on a.title like "%a%"
+order by a.id desc
+limit 10,10;
+
+
+
+select * 
+from ( select a.*, m.name as writeName
+		from article as a
+		inner join `member` as m
+		on a.memberId = m.id
+		order by a.id desc
+		limit 10,10
+	) A
+	where title like "%a%";
