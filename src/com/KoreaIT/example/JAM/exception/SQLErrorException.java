@@ -11,5 +11,4 @@ public class SQLErrorException extends RuntimeException {
 	public Exception getOrigin() {
 		return origin;
 	}
-
 }
